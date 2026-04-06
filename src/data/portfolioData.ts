@@ -6,6 +6,8 @@ export const sections = [
   { id: 'inicio', label: "Início"},
   { id: 'representacao', label: "Representação"},
   { id: 'dobragem', label: "Dobragem"},
+  { id: 'publicidade', label: "Publicidade"},
+  { id: 'outros', label: "Outros"},
   { id: 'contacto', label: "Contacto"},
 ] as const;
 
@@ -39,5 +41,9 @@ export const portfolioData = {
       { id: "AKBAa06e2pA", title: "Publicidade Televisão", type: "Exercício" },
       { id: "BkV9abhiMOc", title: "Spot Publicidade Rádio", type: "Exercício" },
     ],
+    outros: [
+      { id: "hV0sIC0iYz0", title: "Futurália" },
+      { id: "x4-HpqDdeA8", title: "Reels/Tiktok" },
+    ]
   },
 } as const;

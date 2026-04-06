@@ -4,7 +4,7 @@ import React, { ReactNode, useState } from "react";
 interface PortfolioItem {
   id: string;
   title: string;
-  type: string;
+  type?: string;
 }
 
 type PortfolioSectionProps = {
@@ -67,11 +67,13 @@ export const PortfolioSection = ({
                   <Play className="text-white fill-white ml-1" size={24} />
                 </div>
               </div>
-              <div className="absolute top-4 left-4">
-                <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[10px] uppercase tracking-widest font-bold text-white">
-                  {item.type}
-                </span>
-              </div>
+              {item.type && (
+                <div className="absolute top-4 left-4">
+                  <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[10px] uppercase tracking-widest font-bold text-white">
+                    {item.type}
+                  </span>
+                </div>
+              )}
             </div>
             <h3 className="text-xl font-medium text-zinc-800 group-hover:text-brand transition-colors">
               {item.title}

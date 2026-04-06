@@ -3,7 +3,7 @@ import { Navbar } from "./components/layout/Navbar";
 import { MobileMenu } from "./components/layout/MobileMenu";
 import { Hero } from "./components/sections/Hero";
 import { PortfolioSection } from "./components/sections/PortfolioSection";
-import { ChevronUp, Mic, Tv, Video } from "lucide-react";
+import { ChevronUp, Layers, Mic, Tv, Video } from "lucide-react";
 import { portfolioData } from "./data/portfolioData";
 import { VideoModal } from "./components/sections/VideoModal";
 import { Footer } from "./components/layout/Footer";
@@ -70,6 +70,14 @@ function App() {
           title="Publicidade"
           icon={<Tv className="text-brand" size={20} />}
           items={portfolioData.projects.publicidade}
+          onPlay={setActiveVideo}
+        />
+
+        <PortfolioSection
+          id="outros"
+          title="Outros Formatos"
+          icon={<Layers className="text-brand" size={20} />}
+          items={portfolioData.projects.outros}
           onPlay={setActiveVideo}
         />
       </main>
