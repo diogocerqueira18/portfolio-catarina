@@ -1,6 +1,8 @@
-import { portfolioData } from "../../data/portfolioData";
+type HeroProps = {
+  data: any;
+};
 
-export const Hero2 = () => {
+export const Hero2 = ({ data }: HeroProps) => {
   return (
     <section
       id="inicio"
@@ -11,16 +13,16 @@ export const Hero2 = () => {
           <div className="md:col-span-6">
             <>
               <h1 className="text-6xl md:text-8xl font-serif font-bold text-brand leading-[0.9] mb-8">
-                {portfolioData.name}
+                {data.name}
               </h1>
               <div className="flex items-center gap-4 mb-8">
                 <div className="h-px w-12 bg-brand/30" />
                 <span className="text-sm uppercase tracking-[0.3em] font-semibold text-zinc-500">
-                  {portfolioData.title}
+                  {data.title}
                 </span>
               </div>
               <p className="text-lg md:text-xl text-zinc-600 leading-relaxed max-w-xl mb-12 italic font-serif">
-                "{portfolioData.bio}"
+                "{data.bio}"
               </p>
 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-8 p-8 bg-zinc-50 rounded-3xl border border-zinc-100">
@@ -29,7 +31,7 @@ export const Hero2 = () => {
                     Altura
                   </span>
                   <span className="font-medium">
-                    {portfolioData.info.altura}
+                    {data.info.altura}
                   </span>
                 </div>
                 <div>
@@ -37,7 +39,7 @@ export const Hero2 = () => {
                     Cabelo / Olhos
                   </span>
                   <span className="font-medium">
-                    {portfolioData.info.cabelo} / {portfolioData.info.olhos}
+                    {data.info.cabelo} / {data.info.olhos}
                   </span>
                 </div>
                 <div className="col-span-2 md:col-span-1">
@@ -45,7 +47,7 @@ export const Hero2 = () => {
                     Línguas
                   </span>
                   <span className="font-medium text-sm">
-                    {portfolioData.info.linguas.join(", ")}
+                    {data.info.linguas.join(", ")}
                   </span>
                 </div>
               </div>
@@ -56,21 +58,21 @@ export const Hero2 = () => {
             <div className="grid grid-cols-2 gap-4 h-125 md:h-150">
               <div className="rounded-3xl overflow-hidden shadow-xl">
                 <img
-                  src={portfolioData.heroImages[0].src}
+                  src={data.heroImages[0].src}
                   alt=""
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="row-span-2 rounded-3xl overflow-hidden shadow-xl">
                 <img
-                  src={portfolioData.heroImages[1].src}
+                  src={data.heroImages[1].src}
                   alt=""
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="rounded-3xl overflow-hidden shadow-xl">
                 <img
-                  src={portfolioData.heroImages[0].src}
+                  src={data.heroImages[0].src}
                   alt=""
                   className="w-full h-full object-cover"
                 />

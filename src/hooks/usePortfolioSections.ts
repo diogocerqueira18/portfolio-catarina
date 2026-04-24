@@ -16,8 +16,6 @@ export const usePortfolioSections = () => {
     const unsubscribeSections = onSnapshot(
       sectionsQuery,
       (sectionsSnapshot) => {
-        const sectionsData: Section[] = [];
-
         let completed = 0;
         const total = sectionsSnapshot.docs.length;
 
@@ -42,7 +40,9 @@ export const usePortfolioSections = () => {
             const section: Section = {
               id: sectionId,
               label: sectionData.label,
-              show: sectionData.show,
+              navbarLabel: sectionData.navbarLabel,
+              showInNavbar: sectionData.showInNavbar,
+              showOnPage: sectionData.showOnPage,
               icon: sectionData.icon,
               order: sectionData.order,
               videoCount: videos.length,

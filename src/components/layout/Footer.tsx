@@ -1,6 +1,13 @@
 import { Mail, MapPin } from "lucide-react";
+import { FooterData } from "../../types/portfolio";
 
-export const Footer = () => {
+type FooterProps = {
+  name: string;
+  title: string;
+  footer: FooterData;
+};
+
+export const Footer = ({ name, title, footer }: FooterProps) => {
   const currentYear = new Date().getFullYear();
   return (
     <footer id="contacto" className="bg-zinc-900 text-white py-24">
@@ -11,9 +18,7 @@ export const Footer = () => {
               Vamos trabalhar <span className="text-brand italic">juntos?</span>
             </h2>
             <p className="text-zinc-400 text-lg mb-12 max-w-md">
-              Estou sempre à procura de novos desafios e histórias para contar.
-              Entre em contacto para colaborações em teatro, cinema, televisão
-              ou dobragem.
+              {footer.text}
             </p>
 
             <div className="space-y-6">
@@ -24,16 +29,14 @@ export const Footer = () => {
                 <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-brand transition-colors">
                   <Mail size={20} />
                 </div>
-                <span className="text-lg font-medium">
-                  catarinarbduarte@gmail.com
-                </span>
+                <span className="text-lg font-medium">{footer.email}</span>
               </a>
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
                   <MapPin size={20} />
                 </div>
                 <span className="text-lg font-medium text-zinc-400">
-                  Sintra • Cascais • Oeiras • Lisboa
+                  {footer.location}
                 </span>
               </div>
             </div>
@@ -49,8 +52,12 @@ export const Footer = () => {
               </a>
             </div> */}
             <div className="text-right">
-              <p className="text-zinc-500 text-sm uppercase tracking-widest mb-2">Portfolio {currentYear}</p>
-              <p className="text-zinc-400 font-serif italic">© Catarina Barrelas | Atriz & Dobradora</p>
+              <p className="text-zinc-500 text-sm uppercase tracking-widest mb-2">
+                Portfolio {currentYear}
+              </p>
+              <p className="text-zinc-400 font-serif italic">
+                © {name} | {title}
+              </p>
             </div>
           </div>
         </div>

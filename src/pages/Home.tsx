@@ -1,26 +1,25 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Navbar } from "../components/layout/Navbar";
 import { MobileMenu } from "../components/layout/MobileMenu";
 import { Hero3 } from "../components/sections/Hero3";
 import { PortfolioSection } from "../components/sections/PortfolioSection";
-import { portfolioData } from "../data/portfolioData";
-import { ChevronUp, Layers, Mic, Tv, Video } from "lucide-react";
 import { VideoModal } from "../components/sections/VideoModal";
 import { Footer } from "../components/layout/Footer";
-import { useSections } from "../hooks/useSections";
-import { useVideos } from "../hooks/useVideos";
 import { getIcon } from "../lib/getIcon";
 import { usePortfolioSections } from "../hooks/usePortfolioSections";
+import { useGeneralData } from "../hooks/useGeneralData";
+import { BackToTop } from "../components/layout/BackToTop";
 
 export const Home = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
-  const { sections, loading } = usePortfolioSections();
+  const { sections, loading: sectionsLoading } = usePortfolioSections();
 
-  const filteredSections = sections.filter((section) => section.show);
-  console.log(filteredSections);
+  const { data, loading: generalLoading } = useGeneralData();
+
+  const filteredSections = sections.filter((section) => section.showOnPage);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -45,12 +44,11 @@ export const Home = () => {
     };
   }, []);
 
-  if (loading) {
+  if (sectionsLoading || generalLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-zinc-50 text-brand">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border.brand border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          {/* <p className="text-zinc-500">A carregar portfolio...</p> */}
         </div>
       </div>
     );
@@ -64,9 +62,13 @@ export const Home = () => {
         scrolled={scrolled}
         sections={filteredSections}
       />
-      <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+      <MobileMenu
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        sections={filteredSections}
+      />
 
-      <Hero3 />
+      <Hero3 data={data} />
 
       <main className="max-w-7xl mx-auto px-6 space-y-36 pb-32">
         {filteredSections.map((section) => {
@@ -90,16 +92,9 @@ export const Home = () => {
 
       <VideoModal videoId={activeVideo} onClose={() => setActiveVideo(null)} />
 
-      {scrolled && (
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-8 right-8 z-50 w-12 h-12 rounded-full bg-brand text-white shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
-        >
-          <ChevronUp size={24} />
-        </button>
-      )}
+      {scrolled && <BackToTop />}
 
-      <Footer />
+      <Footer name={data.name} title={data.title} footer={data.footer} />
     </div>
   );
 };

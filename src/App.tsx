@@ -1,12 +1,12 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import { Login } from './pages/Login';
-import { Admin } from './pages/Admin';
-import { Home } from './pages/Home';
+import { Login } from "./pages/Login";
+import { Home } from "./pages/Home";
+import { Admin } from "./pages/Admin";
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
-  const isLoggedIn = document.cookie.includes('isAdminLoggedIn=true');
-  
+  const isLoggedIn = document.cookie.includes("isAdminLoggedIn=true");
+
   return isLoggedIn ? <>{children}</> : <Navigate to="/login" replace />;
 };
 
@@ -18,15 +18,14 @@ function App() {
 
         <Route path="/login" element={<Login />} />
 
-        <Route 
-          path="/admin" 
+        <Route
+          path="/admin"
           element={
             <PrivateRoute>
               <Admin />
             </PrivateRoute>
-          } 
+          }
         />
-
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

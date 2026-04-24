@@ -18,7 +18,6 @@ export const Navbar = ({
 }: NavbarProps) => {
   const navigate = useNavigate();
   const [logoClicks, setLogoClicks] = useState(0);
-  console.log(sections)
 
   useEffect(() => {
     if (logoClicks === 5) {
@@ -50,13 +49,13 @@ export const Navbar = ({
             >
               Início
             </a>
-          {sections.map((section) => (
+          {sections.filter((section) => section.showInNavbar).map((section) => (
             <a
               key={section.id}
               href={`#${section.id}`}
               className="text-xs uppercase tracking-[0.2em] font-medium hover:text-brand transition-colors"
             >
-              {section.label}
+              {section.navbarLabel}
             </a>
           ))}
           <a
