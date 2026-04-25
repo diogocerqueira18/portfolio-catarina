@@ -11,8 +11,8 @@ export const Admin = () => {
   const navigate = useNavigate();
 
   const { addSection, sections } = useSections();
-  // const [activeTab, setActiveTab] = useState<string>("sections");
-  const [activeTab, setActiveTab] = useState<string>("general");
+  const [activeTab, setActiveTab] = useState<string>("sections");
+  // const [activeTab, setActiveTab] = useState<string>("general");
 
   const [editingSectionId, setEditingSectionId] = useState<string | null>(null);
   const [editSectionForm, setEditSectionForm] = useState<EditSectionForm>({

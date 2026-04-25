@@ -1,7 +1,17 @@
-import { Edit2, Eye, EyeOff, Menu, Plus, Trash2, Video } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  Edit2,
+  Eye,
+  EyeOff,
+  Menu,
+  Plus,
+  Trash2,
+  Video,
+} from "lucide-react";
 import { getIcon } from "../../lib/getIcon";
 import { useSections } from "../../hooks/useSections";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useVideos } from "../../hooks/useVideos";
 import { iconOptions } from "../../lib/iconOptions";
 import { EditSectionForm } from "../../types/portfolio";
@@ -27,9 +37,6 @@ export const SectionTab = ({
     deleteSection,
   } = useSections();
 
-  const [selectedSectionForVideo, setSelectedSectionForVideo] = useState<
-    string | null
-  >(null);
   const { videos, addVideo, updateVideo, deleteVideo } =
     useVideos(editingSectionId);
 
@@ -40,27 +47,28 @@ export const SectionTab = ({
     type: "Cena",
   });
 
-  const [saveTimeout, setSaveTimeout] = useState<NodeJS.Timeout | null>(null);
+  // ==================== HANDLE BLUR PARA SECÇÕES ====================
+  const handleSectionBlur = (
+    field: "label" | "icon" | "navbarLabel",
+    value: string,
+  ) => {
+    if (!editingSectionId || !value.trim()) return;
 
-  // ================= DEBOUNCE ===============
-  const debouncedSave = useCallback(
-    (type: "section" | "video", id: string, data: Partial<any>) => {
-      if (saveTimeout) clearTimeout(saveTimeout);
+    updateSection(editingSectionId, { [field]: value });
+  };
 
-      const timeout = setTimeout(async () => {
-        if (type === "section" && id) {
-          await updateSection(id, data);
-        } else if (type === "video" && id) {
-          await updateVideo(id, data);
-        }
-      }, 1300);
+  // ==================== HANDLE BLUR PARA VÍDEOS ====================
+  const handleVideoBlur = (
+    videoId: string,
+    field: "title" | "youtubeUrl" | "type",
+    value: string,
+  ) => {
+    if (!videoId || !value.trim()) return;
 
-      setSaveTimeout(timeout);
-    },
-    [saveTimeout, updateSection, updateVideo],
-  );
+    updateVideo(videoId, { [field]: value });
+  };
 
-  // ================= Edicao Section ===============
+  // ==================== FUNÇÕES DE EDIÇÃO ====================
   const startEditingSection = (section: any) => {
     setEditingSectionId(section.id);
     setEditSectionForm({
@@ -70,24 +78,6 @@ export const SectionTab = ({
     });
   };
 
-  const handleEditChange = (
-    field: "label" | "icon" | "navbarLabel",
-    value: string,
-  ) => {
-    if (!editingSectionId) return;
-
-    const newValue = { [field]: value } as Partial<EditSectionForm>;
-    setEditSectionForm(
-      (prev) =>
-        ({
-          ...prev,
-          [field]: value,
-        }) as EditSectionForm,
-    );
-    debouncedSave("section", editingSectionId, { [field]: value });
-  };
-
-  // ================= Edicao Video ===============
   const startEditingVideo = (video: any) => {
     setEditingVideoId(video.id);
     setEditVideoForm({
@@ -96,45 +86,6 @@ export const SectionTab = ({
       type: video.type,
     });
   };
-  const handleVideoChange = (
-    videoId: string,
-    field: "title" | "youtubeUrl" | "type",
-    value: string,
-  ) => {
-    if (!editingVideoId) return;
-
-    setEditVideoForm((prev) => ({ ...prev, [field]: value }));
-    debouncedSave("video", editingVideoId, { [field]: value });
-  };
-
-  useEffect(() => {
-    return () => {
-      if (saveTimeout) clearTimeout(saveTimeout);
-    };
-  }, [saveTimeout]);
-
-  const handleAddSection = async () => {
-    const newSectionData = {
-      label: "Nova Secção",
-      navbarLabel: "Nova Secção",
-      showInNavbar: false,
-      showOnPage: false,
-      icon: "camera",
-      order: sections.length + 1,
-      videoCount: 0,
-    };
-
-    const newId = await addSection(newSectionData);
-
-    if (newId) {
-      setEditingSectionId(newId);
-      setEditSectionForm({
-        label: newSectionData.label,
-        icon: newSectionData.icon,
-        navbarLabel: newSectionData.navbarLabel,
-      });
-    }
-  };
 
   const handleAddVideo = async () => {
     await addVideo({
@@ -142,6 +93,44 @@ export const SectionTab = ({
       youtubeUrl: "",
       type: "Video",
     });
+  };
+
+  // ==================== FUNÇÕES DE ORDENAR ====================
+  const moveSection = async (sectionId: string, direction: "up" | "down") => {
+    const currentIndex = sections.findIndex((s) => s.id === sectionId);
+    if (currentIndex === -1) return;
+
+    const targetIndex =
+      direction === "up" ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= sections.length) return;
+
+    const sectionA = sections[currentIndex];
+    const sectionB = sections[targetIndex];
+
+    const newOrderA = sectionB.order;
+    const newOrderB = sectionA.order;
+
+    await Promise.all([
+      updateSection(sectionA.id!, { order: newOrderA }),
+      updateSection(sectionB.id!, { order: newOrderB }),
+    ]);
+  };
+
+  const moveVideo = async (videoId: string, direction: "up" | "down") => {
+    const currentIndex = videos.findIndex((v) => v.id === videoId);
+    if (currentIndex === -1) return;
+
+    const targetIndex =
+      direction === "up" ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= videos.length) return;
+
+    const videoA = videos[currentIndex];
+    const videoB = videos[targetIndex];
+
+    await Promise.all([
+      updateVideo(videoA.id!, { order: videoB.order || targetIndex }),
+      updateVideo(videoB.id!, { order: videoA.order || currentIndex }),
+    ]);
   };
 
   if (sectionsLoading) {
@@ -154,7 +143,9 @@ export const SectionTab = ({
 
   return (
     <div className="space-y-6">
-      {sections.map((section) => {
+      {sections.map((section, index) => {
+        const isFirst = index === 0;
+        const isLast = index === sections.length - 1;
         const isEditing = editingSectionId === section.id;
         const IconComponent = getIcon(
           isEditing ? editSectionForm.icon : section.icon,
@@ -168,6 +159,22 @@ export const SectionTab = ({
           >
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-4">
+                <div className="flex flex-col gap-1 pr-4 border-r border-zinc-100">
+                  <button
+                    disabled={isFirst}
+                    onClick={() => moveSection(section.id!, "up")}
+                    className="p-1 text-zinc-300 hover:text-brand disabled:opacity-20 transition-colors"
+                  >
+                    <ArrowUp size={16} />
+                  </button>
+                  <button
+                    disabled={isLast}
+                    onClick={() => moveSection(section.id!, "down")}
+                    className="p-1 text-zinc-300 hover:text-brand disabled:opacity-20 transition-colors"
+                  >
+                    <ArrowDown size={16} />
+                  </button>
+                </div>
                 <div className="w-12 h-12 rounded-2xl bg-zinc-50 flex items-center justify-center text-brand">
                   <IconComponent size={24} className="text-brand" />
                 </div>
@@ -245,10 +252,14 @@ export const SectionTab = ({
                     </label>
                     <input
                       type="text"
-                      onChange={(e) =>
-                        handleEditChange("label", e.target.value)
-                      }
-                      value={editSectionForm.label}
+                      value={isEditing ? editSectionForm.label : section.label}
+                      onChange={(e) => {
+                        setEditSectionForm((prev) => ({
+                          ...prev,
+                          label: e.target.value,
+                        }));
+                      }}
+                      onBlur={(e) => handleSectionBlur("label", e.target.value)}
                       className="w-full px-4 py-3 bg-zinc-50 rounded-xl border border-zinc-100 focus:outline-none focus:border-brand/30"
                     />
                   </div>
@@ -258,8 +269,14 @@ export const SectionTab = ({
                     </label>
                     <input
                       type="text"
-                      onChange={(e) =>
-                        handleEditChange("navbarLabel", e.target.value)
+                      onChange={(e) => {
+                        setEditSectionForm((prev) => ({
+                          ...prev,
+                          navbarLabel: e.target.value,
+                        }));
+                      }}
+                      onBlur={(e) =>
+                        handleSectionBlur("navbarLabel", e.target.value)
                       }
                       value={editSectionForm.navbarLabel}
                       className="w-full px-4 py-3 bg-zinc-50 rounded-xl border border-zinc-100 focus:outline-none focus:border-brand/30"
@@ -270,7 +287,13 @@ export const SectionTab = ({
                       Ícone
                     </label>
                     <select
-                      onChange={(e) => handleEditChange("icon", e.target.value)}
+                      onChange={(e) => {
+                        setEditSectionForm((prev) => ({
+                          ...prev,
+                          icon: e.target.value,
+                        }));
+                      }}
+                      onBlur={(e) => handleSectionBlur("icon", e.target.value)}
                       value={editSectionForm.icon}
                       className="w-full px-4 py-3 bg-zinc-50 rounded-xl border border-zinc-100 focus:outline-none focus:border-brand/30"
                     >
@@ -299,13 +322,31 @@ export const SectionTab = ({
                   </div>
 
                   <div className="grid gap-4">
-                    {videos.map((video) => {
+                    {videos.map((video, videoIndex) => {
+                      const isFirstVideo = videoIndex === 0;
+                      const isLastVideo = videoIndex === videos.length - 1;
                       const isEditingVideo = editingVideoId === video.id;
                       return (
                         <div
                           key={video.id}
                           className="p-4 bg-zinc-50 rounded-2xl border border-zinc-100 flex flex-col md:flex-row gap-4 items-end"
                         >
+                          <div className="flex flex-col gap-1 pr-3 border-r border-zinc-200">
+                            <button
+                              disabled={isFirstVideo}
+                              onClick={() => moveVideo(video.id!, "up")}
+                              className="text-zinc-300 hover:text-brand disabled:opacity-20 transition-colors"
+                            >
+                              <ArrowUp size={16} />
+                            </button>
+                            <button
+                              disabled={isLastVideo}
+                              onClick={() => moveVideo(video.id!, "down")}
+                              className="text-zinc-300 hover:text-brand disabled:opacity-20 transition-colors"
+                            >
+                              <ArrowDown size={16} />
+                            </button>
+                          </div>
                           <div className="w-full md:w-24 aspect-video rounded-xl overflow-hidden bg-zinc-200 border border-zinc-200">
                             {video.videoId ? (
                               <img
@@ -332,9 +373,15 @@ export const SectionTab = ({
                                     ? editVideoForm.title
                                     : video.title
                                 }
+                                onChange={(e) => {
+                                  setEditVideoForm((prev) => ({
+                                    ...prev,
+                                    title: e.target.value,
+                                  }));
+                                }}
                                 onFocus={() => startEditingVideo(video)}
-                                onChange={(e) =>
-                                  handleVideoChange(
+                                onBlur={(e) =>
+                                  handleVideoBlur(
                                     video.id!,
                                     "title",
                                     e.target.value,
@@ -354,9 +401,15 @@ export const SectionTab = ({
                                     ? editVideoForm.youtubeUrl
                                     : video.youtubeUrl
                                 }
+                                onChange={(e) => {
+                                  setEditVideoForm((prev) => ({
+                                    ...prev,
+                                    youtubeUrl: e.target.value,
+                                  }));
+                                }}
                                 onFocus={() => startEditingVideo(video)}
-                                onChange={(e) =>
-                                  handleVideoChange(
+                                onBlur={(e) =>
+                                  handleVideoBlur(
                                     video.id!,
                                     "youtubeUrl",
                                     e.target.value,
@@ -377,9 +430,15 @@ export const SectionTab = ({
                                     ? editVideoForm.type
                                     : video.type
                                 }
+                                onChange={(e) => {
+                                  setEditVideoForm((prev) => ({
+                                    ...prev,
+                                    type: e.target.value,
+                                  }));
+                                }}
                                 onFocus={() => startEditingVideo(video)}
-                                onChange={(e) =>
-                                  handleVideoChange(
+                                onBlur={(e) =>
+                                  handleVideoBlur(
                                     video.id!,
                                     "type",
                                     e.target.value,
