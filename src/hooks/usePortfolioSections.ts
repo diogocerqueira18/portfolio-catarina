@@ -29,9 +29,12 @@ export const usePortfolioSections = () => {
           const sectionData = sectionDoc.data();
           const sectionId = sectionDoc.id;
 
-          const videosRef = collection(db, "sections", sectionId, "videos");
+          const videosQuery = query(
+            collection(db, "sections", sectionId, "videos"),
+            orderBy("order", "asc")
+          );
 
-          const unsubscribeVideos = onSnapshot(videosRef, (videosSnapshot) => {
+          const unsubscribeVideos = onSnapshot(videosQuery, (videosSnapshot) => {
             const videos = videosSnapshot.docs.map((v) => ({
               id: v.id,
               ...v.data(),
