@@ -49,7 +49,7 @@ export const PortfolioSection = ({
           // </button>
           <button
             onClick={() => setShowall(!showAll)}
-            className="px-5 py-2.5 rounded-2xl bg-zinc-50 border border-zinc-100 text-[10px] uppercase tracking-[0.2em] font-bold text-zinc-500 hover:text-brand hover:border-brand/20 hover:bg-white transition-all duration-300 flex items-center gap-3 shadow-sm active:scale-95"
+            className="px-5 py-2.5 rounded-2xl bg-brand font-sans text-[10px] uppercase tracking-[0.2em] font-bold text-white hover:bg-zinc-900 hover:shadow-lg transition-all duration-300 flex items-center gap-3 shadow-md shadow-brand/10 active:scale-95"
           >
             {showAll ? "Ver Menos" : "Ver Tudo"}
             <ChevronRight size={14} className={showAll ? "rotate-90" : ""} />

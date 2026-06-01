@@ -95,6 +95,18 @@ export const GeneralTab = () => {
             className="w-full px-4 py-3 bg-zinc-50 rounded-xl border border-zinc-100 focus:outline-none focus:border-brand/30 h-32 resize-none"
           />
         </div>
+        <div>
+          <label className="block text-[10px] uppercase tracking-widest text-zinc-400 mb-2">
+            Texto de Apreentação
+          </label>
+          <textarea
+            value={form.aboutText || ""}
+            onChange={(e) => setForm({ ...form, aboutText: e.target.value })}
+            onFocus={() => setIsEditing(true)}
+            onBlur={() => handleBlur("aboutText")}
+            className="w-full px-4 py-3 bg-zinc-50 rounded-xl border border-zinc-100 focus:outline-none focus:border-brand/30 h-32 resize-none"
+          />
+        </div>
         <div className="grid md:grid-cols-3 gap-6">
           <div>
             <label className="block text-[10px] uppercase tracking-widest text-zinc-400 mb-2">

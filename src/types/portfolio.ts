@@ -28,6 +28,7 @@ export interface EditSectionForm {
 export interface GeneralData {
   name: string;
   title: string;
+  aboutText: string;
   bio: string;
   info: {
     altura: string;

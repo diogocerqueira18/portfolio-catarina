@@ -53,7 +53,6 @@ export const Home = () => {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen font-sans selection:bg-brand selection:text-white">
       <Navbar
@@ -70,7 +69,13 @@ export const Home = () => {
 
       <Hero3 data={data} />
 
-      <main className="max-w-7xl mx-auto px-6 space-y-36 pb-32">
+      <main className="max-w-7xl mx-auto px-6 space-y-32 pb-32">
+        {data.aboutText && (
+          <div className="max-w-3xl text-zinc-600 font-serif text-lg md:text-2xl md:leading-relaxed leading-relaxed whitespace-pre-line pt-2 pb-16 border-b border-zinc-100">
+            {data.aboutText}
+          </div>
+        )}
+
         {filteredSections.map((section) => {
           const IconComponent = getIcon(section.icon);
           return (

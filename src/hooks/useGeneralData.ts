@@ -17,6 +17,7 @@ export const useGeneralData = () => {
   const [data, setData] = useState<GeneralData>({
     name: "",
     title: "",
+    aboutText: "",
     bio: "",
     info: { altura: "", cabelo: "", olhos: "" },
     heroImages: [{ src: "" }, { src: "" }, { src: "" }],
